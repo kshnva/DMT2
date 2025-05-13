@@ -96,39 +96,6 @@ print("\n=== Correlation with booking_or_click ===\n")
 print(filtered[['price_diff_from_history', 'starrating_diff', 'location_score1_rank', 'booking_or_click']]
       .corr()['booking_or_click'])
 
-# 8. drop features that contain to many missing values
-def handle_missing_data(df):
-    # Competitor columns
-    inv_cols  = [f'comp{i}_inv' for i in range(1, 9)]
-    rate_cols = [f'comp{i}_rate' for i in range(1, 9)]
-    pct_cols  = [f'comp{i}_rate_percent_diff' for i in range(1, 9)]
-    
-    # 1) Inventory: fill NaN → 0, and replace -1 → 0
-    df[inv_cols] = df[inv_cols].fillna(0).replace(-1, 0)
-    
-    # 2) Rates: fill NaN → 0
-    df[rate_cols] = df[rate_cols].fillna(0)
-    
-    # 3) Percent diffs: fill NaN → 0, then multiply by the (now filled) rates
-    df[pct_cols] = df[pct_cols].fillna(0).multiply(df[rate_cols], axis=0)
-    
-    # 4) Drop the raw rate columns
-    df.drop(columns=rate_cols, inplace=True)
-    
-    # 5) Drop other columns with too many missing values
-    to_drop = [
-        'gross_bookings_usd',
-        'srch_query_affinity_score',
-        'visitor_hist_adr_usd',
-        'orig_destination_distance',
-        'visitor_hist_starrating',
-        'prop_location_score2'
-    ]
-    df.drop(columns=to_drop, errors='ignore', inplace=True)
-    
-    # 6) Reviews: missing → 0
-    df['prop_review_score'] = df['prop_review_score'].fillna(0)
-    
-    return df
+
 
 
